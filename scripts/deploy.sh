@@ -14,7 +14,7 @@ PROJECT_DIR="/home/kei/new-ai-crm"
 REMOTE_USER="kei"
 REMOTE_HOST="neu.tplinkdns.com"
 REMOTE_DIR="~/www/ai-crm"
-REMOTE_PASS="${REMOTE_PASS:?Set REMOTE_PASS in your shell or CI secret store}"
+SSH_OPTS="-o StrictHostKeyChecking=no"
 
 echo "=== AI-CRM Deployment ==="
 echo ""
@@ -32,14 +32,14 @@ rsync -avz --delete \
   --exclude 'node_modules' \
   --exclude '.git' \
   --exclude '.next/cache' \
-  -e "sshpass -p '$REMOTE_PASS' ssh -o StrictHostKeyChecking=no" \
+  -e "ssh $SSH_OPTS" \
   ./ $REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/
 echo "Sync complete."
 echo ""
 
 # 3. Install dependencies on remote
 echo "[3/4] Installing dependencies on remote..."
-sshpass -p "$REMOTE_PASS" ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST "
+ssh $SSH_OPTS $REMOTE_USER@$REMOTE_HOST "
   cd $REMOTE_DIR
   export PATH=/opt/homebrew/bin:\$PATH
   npm install --production
@@ -49,7 +49,7 @@ echo ""
 
 # 4. Restart PM2 service
 echo "[4/4] Restarting PM2 service..."
-sshpass -p "$REMOTE_PASS" ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST "
+ssh $SSH_OPTS $REMOTE_USER@$REMOTE_HOST "
   cd $REMOTE_DIR
   export PATH=/opt/homebrew/bin:\$PATH
   pm2 restart ai-crm 2>/dev/null || pm2 start ecosystem.config.js

@@ -130,11 +130,11 @@ npm run build
 
 # 2. 원격 서버로 배포
 rsync -avz --delete --exclude 'node_modules' --exclude '.git' \
-  -e "sshpass -p "$REMOTE_PASS" ssh -o StrictHostKeyChecking=no" \
+  -e "ssh -o StrictHostKeyChecking=no" \
   ./ kei@neu.tplinkdns.com:~/www/ai-crm/
 
 # 3. 원격 서버에서 의존성 설치 및 시작
-sshpass -p "$REMOTE_PASS" ssh kei@neu.tplinkdns.com "
+ssh kei@neu.tplinkdns.com "
   cd ~/www/ai-crm && \
   export PATH=/opt/homebrew/bin:\$PATH && \
   npm install --production && \

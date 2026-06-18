@@ -106,8 +106,8 @@ platform, platform_account_id, ...
 
 ### 2.3 Medium (개선 필요)
 
-#### ISSUE-006: 환경변수 문서 노출
-**현상**: HANDOVER.md에 비밀번호, API 키 노출
+#### ISSUE-006: 환경변수 문서 관리 개선
+**현상**: HANDOVER.md의 환경변수 안내와 `.env.example` 분리 필요
 **파일**: `/home/kei/new-ai-crm/HANDOVER.md`
 
 #### ISSUE-007: Match-Trade API 키 미설정
@@ -190,7 +190,7 @@ CREATE POLICY "Allow update for service role" ON trading_accounts FOR UPDATE USI
 EOF
 
 # 3. Supabase에 적용 (원격 서버에서)
-sshpass -p "$REMOTE_PASS" ssh kei@neu.tplinkdns.com "
+ssh kei@neu.tplinkdns.com "
   cd ~/gudax-crm
   supabase db push
 "
@@ -494,7 +494,7 @@ PROJECT_DIR="/home/kei/new-ai-crm"
 REMOTE_USER="kei"
 REMOTE_HOST="neu.tplinkdns.com"
 REMOTE_DIR="~/www/ai-crm"
-REMOTE_PASS="${REMOTE_PASS:?Set REMOTE_PASS in your shell or CI secret store}"
+SSH_OPTS="-o StrictHostKeyChecking=no"
 
 echo "=== Building locally ==="
 cd $PROJECT_DIR
@@ -502,11 +502,11 @@ npm run build
 
 echo "=== Syncing to remote ==="
 rsync -avz --delete --exclude 'node_modules' --exclude '.git' \
-  -e "sshpass -p '$REMOTE_PASS' ssh -o StrictHostKeyChecking=no" \
+  -e "ssh $SSH_OPTS" \
   ./ $REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/
 
 echo "=== Installing & Starting on remote ==="
-sshpass -p "$REMOTE_PASS" ssh $REMOTE_USER@$REMOTE_HOST "
+ssh $SSH_OPTS $REMOTE_USER@$REMOTE_HOST "
   cd $REMOTE_DIR
   export PATH=/opt/homebrew/bin:\$PATH
   npm install --production
