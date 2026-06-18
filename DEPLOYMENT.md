@@ -121,7 +121,7 @@ npm install -g supabase
 ### Step 4: Clone Repository
 
 ```bash
-git clone https://github.com/gudax/new-ai-crm.git ~/new-ai-crm
+git clone https://github.com/nexusailabs/new-ai-crm.git ~/new-ai-crm
 cd ~/new-ai-crm
 ```
 
