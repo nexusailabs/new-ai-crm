@@ -1,0 +1,93 @@
+/**
+ * Match-Trade Orders gRPC Service
+ * Based on Match-Trader Broker API
+ * Created: 2025-12-29
+ * Mission: MISSION-20251229-GRPC002
+ */
+
+syntax = "proto3";
+
+package matchtrader.orders;
+
+// Orders Service
+service OrdersService {
+  // Stream pending orders updates by groups or logins
+  rpc getOrdersUpdateStreamByGroupsOrLogins(OrdersStreamRequest) returns (stream OrderUpdate);
+
+  // Get pending orders snapshot (one-time)
+  rpc getPendingOrdersByGroupsOrLogins(OrdersRequest) returns (OrdersResponse);
+}
+
+// Request for orders stream
+message OrdersStreamRequest {
+  repeated string logins = 1;
+  repeated string groups = 2;
+}
+
+// Request for orders snapshot
+message OrdersRequest {
+  repeated string logins = 1;
+  repeated string groups = 2;
+}
+
+// Response for orders snapshot
+message OrdersResponse {
+  repeated PendingOrder orders = 1;
+}
+
+// Order update from stream
+message OrderUpdate {
+  PendingOrder order = 1;
+  OrderUpdateType updateType = 2;
+}
+
+// Update type enum
+enum OrderUpdateType {
+  UNKNOWN_ORDER_UPDATE = 0;
+  CREATED = 1;
+  MODIFIED = 2;
+  ACTIVATED = 3;
+  CANCELLED = 4;
+  EXPIRED = 5;
+}
+
+// Pending order data
+message PendingOrder {
+  int64 orderId = 1;
+  string accountLogin = 2;
+  string accountUuid = 3;
+  string symbol = 4;
+  OrderType orderType = 5;
+  double volume = 6;
+  double activationPrice = 7;
+  double limitPrice = 8;
+  double stopLoss = 9;
+  double takeProfit = 10;
+  OrderStatus status = 11;
+  int64 createdAt = 12;  // Unix timestamp in ms
+  int64 expirationAt = 13;  // Unix timestamp in ms
+  int64 activatedAt = 14;  // Unix timestamp in ms
+  int64 cancelledAt = 15;  // Unix timestamp in ms
+  string comment = 16;
+}
+
+// Order type enum
+enum OrderType {
+  UNKNOWN_ORDER_TYPE = 0;
+  BUY_LIMIT = 1;
+  SELL_LIMIT = 2;
+  BUY_STOP = 3;
+  SELL_STOP = 4;
+  BUY_STOP_LIMIT = 5;
+  SELL_STOP_LIMIT = 6;
+}
+
+// Order status enum
+enum OrderStatus {
+  UNKNOWN_STATUS = 0;
+  PENDING = 1;
+  ACTIVATED = 2;
+  CANCELLED = 3;
+  EXPIRED = 4;
+  FILLED = 5;
+}

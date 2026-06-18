@@ -1,0 +1,62 @@
+/**
+ * Match-Trade Ledger gRPC Service
+ * Based on Match-Trader Broker API
+ * Created: 2025-12-29
+ */
+
+syntax = "proto3";
+
+package matchtrader.ledger;
+
+// Ledger History Service
+service LedgerHistoryService {
+  // Stream ledger entries by groups or logins
+  rpc getLedgersStreamByGroupsOrLogins(LedgerStreamRequest) returns (stream LedgerEntry);
+}
+
+// Request for ledger stream
+message LedgerStreamRequest {
+  // List of account logins to subscribe
+  repeated string logins = 1;
+  // List of groups to subscribe
+  repeated string groups = 2;
+  // Filter by operation types
+  repeated HistoryOperationType operationTypes = 3;
+}
+
+// Ledger entry from stream
+message LedgerEntry {
+  string uuid = 1;
+  string accountUuid = 2;
+  string login = 3;
+  double amount = 4;
+  double netAmount = 5;
+  string currency = 6;
+  HistoryOperationType operationType = 7;
+  string status = 8;
+  string paymentGatewayUuid = 9;
+  string paymentGatewayName = 10;
+  string walletAddress = 11;
+  string reference = 12;
+  string paymentId = 13;
+  string partnerId = 14;
+  int64 createdAt = 15;
+  string accountEmail = 16;
+  string accountName = 17;
+  string accountSurname = 18;
+}
+
+// Operation type enum
+enum HistoryOperationType {
+  UNKNOWN = 0;
+  DEPOSIT = 1;
+  WITHDRAW = 2;
+  INTERNAL_TRANSFER = 3;
+  CREDIT = 4;
+  BONUS = 5;
+  COMMISSION = 6;
+  SWAP = 7;
+  DIVIDEND = 8;
+  ROLLOVER = 9;
+  CORRECTION = 10;
+}

@@ -1,0 +1,61 @@
+/**
+ * Match-Trade Account Equity gRPC Service
+ * Based on Match-Trader Broker API
+ * Created: 2025-12-29
+ * Mission: MISSION-20251229-GRPC002
+ *
+ * WARNING: This stream is resource-intensive
+ * Default update interval: 5 seconds
+ * Use with caution - apply optimization strategies
+ */
+
+syntax = "proto3";
+
+package matchtrader.equity;
+
+// Client Equity Service
+service ClientEquityService {
+  // Stream client equity by groups or logins
+  // WARNING: Resource-intensive, use with caution
+  rpc getClientEquityStream(EquityStreamRequest) returns (stream EquityUpdate);
+
+  // Get equity snapshot (one-time)
+  rpc getClientEquitySnapshot(EquitySnapshotRequest) returns (EquitySnapshotResponse);
+}
+
+// Request for equity stream
+message EquityStreamRequest {
+  // List of account logins to subscribe
+  repeated string logins = 1;
+  // List of groups to subscribe
+  repeated string groups = 2;
+  // Optional: update interval in milliseconds (default: 5000)
+  int32 updateIntervalMs = 3;
+}
+
+// Request for equity snapshot
+message EquitySnapshotRequest {
+  repeated string logins = 1;
+  repeated string groups = 2;
+}
+
+// Response for equity snapshot
+message EquitySnapshotResponse {
+  repeated EquityUpdate updates = 1;
+}
+
+// Equity update from stream
+message EquityUpdate {
+  string accountLogin = 1;
+  string accountUuid = 2;
+  string accountGroup = 3;
+  double equity = 4;
+  double balance = 5;
+  double credit = 6;
+  double margin = 7;
+  double freeMargin = 8;
+  double marginLevel = 9;  // In percentage
+  double floatingPL = 10;
+  double closedPLToday = 11;
+  int64 timestamp = 12;  // Unix timestamp in ms
+}

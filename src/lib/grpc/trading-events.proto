@@ -1,0 +1,68 @@
+/**
+ * Match-Trade Trading Events gRPC Service
+ * Based on Match-Trader Broker API
+ * Created: 2025-12-29
+ * Mission: MISSION-20251229-GRPC002
+ */
+
+syntax = "proto3";
+
+package matchtrader.trading;
+
+// Trading Events Service
+service TradingEventsService {
+  // Stream trading events by groups or logins
+  rpc getTradingEventsStream(TradingEventsRequest) returns (stream TradingEvent);
+
+  // Get trading events by groups or logins (one-time)
+  rpc getTradingEventsByGroupsOrLogins(TradingEventsRequest) returns (TradingEventsResponse);
+}
+
+// Request for trading events stream
+message TradingEventsRequest {
+  // List of account logins to subscribe
+  repeated string logins = 1;
+  // List of groups to subscribe
+  repeated string groups = 2;
+  // Filter by event types
+  repeated TradingEventType eventTypes = 3;
+  // Include historical events from this timestamp (optional)
+  int64 fromTimestamp = 4;
+}
+
+// Response for batch trading events
+message TradingEventsResponse {
+  repeated TradingEvent events = 1;
+}
+
+// Trading event from stream
+message TradingEvent {
+  string uuid = 1;
+  TradingEventType eventType = 2;
+  string accountLogin = 3;
+  string accountUuid = 4;
+  string accountGroup = 5;
+  string symbol = 6;
+  int64 positionId = 7;
+  int64 orderId = 8;
+  double volume = 9;
+  double price = 10;
+  double profit = 11;
+  string details = 12;  // JSON string for additional details
+  int64 eventTime = 13;  // Unix timestamp in ms
+  int64 createdAt = 14;  // Unix timestamp in ms
+}
+
+// Trading event type enum
+enum TradingEventType {
+  UNKNOWN_EVENT = 0;
+  MARGIN_CALL = 1;
+  STOP_OUT = 2;
+  TAKE_PROFIT = 3;
+  STOP_LOSS = 4;
+  ORDER_ACTIVATION = 5;
+  POSITION_CLOSE = 6;
+  POSITION_MODIFY = 7;
+  ORDER_CANCEL = 8;
+  OTHER = 99;
+}

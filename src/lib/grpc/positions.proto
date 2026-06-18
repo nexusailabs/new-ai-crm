@@ -1,0 +1,81 @@
+/**
+ * Match-Trade Positions gRPC Service
+ * Based on Match-Trader Broker API
+ * Created: 2025-12-29
+ * Mission: MISSION-20251229-GRPC002
+ */
+
+syntax = "proto3";
+
+package matchtrader.positions;
+
+// Positions Service
+service PositionsService {
+  // Stream open positions by groups or logins
+  rpc getOpenPositionsStreamByGroupsOrLogins(PositionsStreamRequest) returns (stream PositionUpdate);
+
+  // Get positions snapshot (one-time)
+  rpc getOpenPositionsByGroupsOrLogins(PositionsRequest) returns (PositionsResponse);
+}
+
+// Request for positions stream
+message PositionsStreamRequest {
+  repeated string logins = 1;
+  repeated string groups = 2;
+}
+
+// Request for positions snapshot
+message PositionsRequest {
+  repeated string logins = 1;
+  repeated string groups = 2;
+}
+
+// Response for positions snapshot
+message PositionsResponse {
+  repeated Position positions = 1;
+}
+
+// Position update from stream
+message PositionUpdate {
+  Position position = 1;
+  UpdateType updateType = 2;
+}
+
+// Update type enum
+enum UpdateType {
+  UNKNOWN_UPDATE = 0;
+  NEW = 1;
+  MODIFY = 2;
+  CLOSE = 3;
+}
+
+// Position data
+message Position {
+  int64 positionId = 1;
+  string accountLogin = 2;
+  string accountUuid = 3;
+  string symbol = 4;
+  string alias = 5;
+  double volume = 6;
+  PositionSide side = 7;
+  int64 openTime = 8;  // Unix timestamp in ms
+  double openPrice = 9;
+  double currentPrice = 10;
+  double stopLoss = 11;
+  double takeProfit = 12;
+  double profit = 13;
+  double netProfit = 14;
+  double swap = 15;
+  double commission = 16;
+  double margin = 17;
+  bool isClosed = 18;
+  int64 closedAt = 19;  // Unix timestamp in ms
+  double closePrice = 20;
+}
+
+// Position side enum
+enum PositionSide {
+  UNKNOWN_SIDE = 0;
+  BUY = 1;
+  SELL = 2;
+}
