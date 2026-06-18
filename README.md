@@ -6,7 +6,7 @@ The project is designed as an operational back office: customer records, trading
 
 ## Delivery Reference
 
-This repository documents the New AI CRM software deliverable provided by Nexus AI Labs for **Shanghai Carbon Rich Invest PTE. LTD.**
+This repository documents the New AI CRM software deliverable provided by Nexus AI Labs for **Shanghai Carbon Rich Invest PTE. LTD. (Shanghai Carbon)**.
 
 For review and evidence purposes, the repository contains the application source code, API routes, database migrations, integration adapters, operational dashboards, and deployment documentation associated with that software deliverable.
 
